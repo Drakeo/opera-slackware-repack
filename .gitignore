@@ -1,0 +1,11 @@
+*~
+.#*
+.directory
+*.tgz
+*.tar.xz
+*.tar.gz
+*.txz
+*.bz2
+*.zip
+*.rpm
+*.deb 

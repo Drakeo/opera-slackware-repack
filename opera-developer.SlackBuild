@@ -28,9 +28,9 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-PRGNAM=opera
-VERSION=${VERSION:-36.0.2130.46}
-BUILD=${BUILD:-3}
+PRGNAM=opera-developer
+VERSION=${VERSION:-38.0.2190.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
 
@@ -68,14 +68,14 @@ fi
 
 
 if [ "$ARCH" = "x86_64" ]; then
-FILENAME=opera-stable_"$VERSION"_amd64.rpm
-BASENAME=opera-stable_"$VERSION"_$BITS
+FILENAME=opera-developer_"$VERSION"_amd64.rpm
+BASENAME=opera-developer_"$VERSION"_$BITS
 else
-FILENAME=opera-stable_"$VERSION"_i386.rpm 
-BASENAME=opera-stable_"$VERSION"_$BITS
+FILENAME=opera-developer_"$VERSION"_i386.rpm 
+BASENAME=opera-developer_"$VERSION"_$BITS
 fi
 
-wget -c http://operasoftware.pc.cdn.bitgravity.com/pub/opera/desktop/"$VERSION"/linux/$FILENAME
+wget -c http://ftp.opera.com/pub/opera-developer/$VERSION/linux/$FILENAME
 
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
 rpm2targz $FILENAME
