@@ -29,7 +29,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 PRGNAM=opera-developer
-VERSION=${VERSION:-43.0.2431.0}
+VERSION=${VERSION:-44.0.2475.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
