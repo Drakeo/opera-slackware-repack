@@ -369,4 +369,12 @@ pause 'Press [Enter] key to continue or ctrl c to stop...'
 
 upgradepkg --reinstall --install-new $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
 
-echo -e "\e[1;33m you may want to delete rpm it is owned by root just run or copy paste rm $FILENAME\e[0m"
+cd $CWD
+
+echo -e "\e[1;33m You should delete rpm $FILENAME it is owned by root. \e[0m"
+pause 'Press [Enter] key to continue or ctrl c to stop and save source $FILENAME...'
+# rest of the script
+#
+rm *.rpm
+
+
