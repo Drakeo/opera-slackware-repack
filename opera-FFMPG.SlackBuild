@@ -90,7 +90,7 @@ mkdir -p $TMP $PKG $OUTPUT
 
 
 # We want to keep this build for later use it is over 3 gigs. 
-if [ -d $TMP/$FFSRNAM ]
+if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip ]
 then
 cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
 else
