@@ -12,7 +12,7 @@ this allows h264 video formats
 
 builds on slackware 14.2
 
-to build in slackware current need to  ln -s libtinfo.so.5 libtinfo.so.6
+to build in slackware current need to  ln -s libtinfo.so.6 libtinfo.so.5
 this will build in qt4 or qt5
 
 you will need to install ninja
