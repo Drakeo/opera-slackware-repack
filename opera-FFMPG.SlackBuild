@@ -90,7 +90,8 @@ mkdir -p $TMP $PKG $OUTPUT
 
 
 # We want to keep this build for later use it is over 3 gigs. 
-if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip ]
+
+if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$ARCH.zip ]
 then
 cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
 else
@@ -375,7 +376,7 @@ rm $CWD/slack-desc
 rm $CWD/doinst.sh
 cd $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM/
 rm libffmpeg.so
-unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip  
+unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$ARCH.zip  
 
 
 
