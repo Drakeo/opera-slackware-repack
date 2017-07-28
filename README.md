@@ -9,12 +9,13 @@ opera-FFMPEG and  opera-developer-FFMPG
 this builds and uses the ffmpeg from google chromium source
 
 this allows h264 video formats
-
-builds on slackware 14.2
-
+~~~
+builds on slackware 14.2 and "current Fri Jul 28"
+build in 14.1 you must upgrade binutils from Slackware64-14.2
+lftp -c 'open http://mirrors.kernel.org/slackware/slackware64-14.2/source/d/; mirror -c -e binutils'
+~~~
 to build in slackware current need to  ln -s libtinfo.so.6 libtinfo.so.5
 this will build in qt4 or qt5
-
 you will need to install ninja
-
+~~~
 any questions email me at flats_fixed@flatsfixedbicycles.com subjet opera ffmpeg.
