@@ -4,6 +4,12 @@ a prebuilt unmodified build of opera
 it must be ran as root to set permissiond for 
 opera-sandbox.
 
+# ffmpeg restricted build opition
+~~~
+FFMPEG=YES ./opera.SlackBuild
+or
+FFMPEG=YES ./opera-developer.SlackBuild
+~~~
 opera-FFMPEG and  opera-developer-FFMPG 
 
 this builds and uses the ffmpeg from google chromium source
