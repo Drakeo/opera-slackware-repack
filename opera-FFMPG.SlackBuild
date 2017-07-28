@@ -83,7 +83,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
 # We want to keep this build for later use it is over 3 gigs. 
-if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip ]
+if [ -d $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt ]
 then
   cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
   python build_ffmpeg.py --target_arch=$FFARCH
