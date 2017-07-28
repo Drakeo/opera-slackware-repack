@@ -79,29 +79,28 @@ FILENAME=opera-stable_"$VERSION"_i386.rpm
 BASENAME=opera-stable_"$VERSION"_$BITS
 fi
 
-wget -c http://operasoftware.pc.cdn.bitgravity.com/pub/opera/desktop/"$VERSION"/linux/$FILENAME
-
-echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
-rpm2targz $FILENAME
-
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-
-
 # We want to keep this build for later use it is over 3 gigs. 
-
-if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$ARCH.zip ]
+if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip ]
 then
-cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
+  cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
+  python build_ffmpeg.py --target_arch=$FFARCH
 else
 # make sure it builds before we waist our time. Only 14.2 
   mkdir -p $TMP/$FFSRNAM
   cd $TMP/$FFSRNAM
-  git clone https://github.com/iteufel/nwjs-ffmpeg-prebuilt.git
+  git clone https://github.com/Drakeo/nwjs-ffmpeg-prebuilt.git
   cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
   python build_ffmpeg.py --target_arch=$FFARCH
 fi
+
+cd $CWD
+
+wget -c http://operasoftware.pc.cdn.bitgravity.com/pub/opera/desktop/"$VERSION"/linux/$FILENAME
+echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
+rpm2targz $FILENAME
 
 rm -rf $TMP/${PRGNAM}-$VERSION
 mkdir -p $TMP/${PRGNAM}-$VERSION
@@ -376,7 +375,7 @@ rm $CWD/slack-desc
 rm $CWD/doinst.sh
 cd $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM/
 rm libffmpeg.so
-unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$ARCH.zip  
+unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip  
 
 
 
