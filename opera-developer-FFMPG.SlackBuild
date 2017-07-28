@@ -30,7 +30,7 @@ fi
 
 PRGNAM=opera-developer
 FFSRNAM=ffmpeg
-VERSION=${VERSION:-48.0.2657.0}
+VERSION=${VERSION:-48.0.2664.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
