@@ -70,7 +70,8 @@ else
   LIBDIRSUFFIX=""
 fi
 
-
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
 
 if [ "$ARCH" = "x86_64" ]; then
 FILENAME=opera-stable_"$VERSION"_amd64.rpm
@@ -109,8 +110,7 @@ wget -c http://operasoftware.pc.cdn.bitgravity.com/pub/opera/desktop/"$VERSION"/
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
 rpm2targz $FILENAME
 
-rm -rf $PKG
-mkdir -p $TMP $PKG $OUTPUT
+
 
 rm -rf $TMP/${PRGNAM}-$VERSION
 mkdir -p $TMP/${PRGNAM}-$VERSION
