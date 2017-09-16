@@ -82,17 +82,18 @@ BASENAME=opera-stable_"$VERSION"_$BITS
 fi
 #ffmpeg=yes option
 if [ "${FFMPEG:-no}" = "no" ]; then
-echo buld using opera ffmpeg.so
+echo -e "\e[1;33m buld using opera ffmpeg.so \e[0m"
 sleep 2
 else
 cat > ffmpegbuild <<EOF
   # We want to keep this build for later use it is over 3 gigs. 
-  if [ -d $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt ]
+  if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip ]
   then
-  cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
-  python build_ffmpeg.py --target_arch=$FFARCH
+  echo -e "\e[1;33m FFMPEG built already \e[0m"
+  sleep 5 
  else
  # make sure it builds before we waist our time. Only 14.2 
+  rm -rf $TMP/$FFSRNAM
   mkdir -p $TMP/$FFSRNAM
   cd $TMP/$FFSRNAM
   git clone https://github.com/Drakeo/nwjs-ffmpeg-prebuilt.git
