@@ -88,18 +88,20 @@ sleep 2
 else
 cat > ffmpegbuild <<EOF
   # We want to keep this build for later use it is over 3 gigs. 
-  if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip ]
-  then
-  echo -e "\e[1;33m FFMPEG built already \e[0m"
+if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH-custom.zip ]; then
+   echo already built ffmpeg.so zip found 
+elif [ -d $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt ]; then
+  echo clean old build start new !!!SELECT NO to Just Rebuild!!!!
   sleep 5 
- else
+  cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
+  python build_ffmpeg.py --clean -nw 0.24.4 -ta $FFARCH -pc
  # make sure it builds before we waist our time. Only 14.2 
-  rm -rf $TMP/$FFSRNAM
+else 
   mkdir -p $TMP/$FFSRNAM
   cd $TMP/$FFSRNAM
   git clone https://github.com/Drakeo/nwjs-ffmpeg-prebuilt.git
   cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
-  python build_ffmpeg.py --target_arch=$FFARCH
+  python build_ffmpeg.py -nw 0.24.4 -ta $FFARCH -pc
 fi
 EOF
 cd $CWD
@@ -392,7 +394,7 @@ echo built with opera ffmpeg
 else
 cd $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM/
 rm libffmpeg.so
-unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH.zip
+unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH-custom.zip
 fi
 
 cd $PKG
