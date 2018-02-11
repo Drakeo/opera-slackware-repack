@@ -109,7 +109,7 @@ sh ffmpegbuild
 rm ffmpegbuild
 fi
 cd $CWD
-wget -c http://operasoftware.pc.cdn.bitgravity.com/pub/opera/desktop/"$VERSION"/linux/$FILENAME
+wget -c https://ftp.opera.com/pub/opera/desktop/"$VERSION"/linux/$FILENAME
 
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
 rpm2targz $FILENAME
