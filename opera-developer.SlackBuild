@@ -45,6 +45,7 @@ fi
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp/SBo}
+build=$TMP/build
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
@@ -71,14 +72,16 @@ else
 fi
 
 rm -rf $PKG
+rm -rf $build
 mkdir -p $TMP $PKG $OUTPUT
 
 if [ "$ARCH" = "x86_64" ]; then
 FILENAME=opera-developer_"$VERSION"_amd64.rpm
 BASENAME=opera-developer_"$VERSION"_$BITS
 else
-FILENAME=opera-developer_"$VERSION"_i386.rpm 
-BASENAME=opera-developer_"$VERSION"_$BITS
+echo opera no longer supports 32 bit
+sleep 4
+exit
 fi
 
 #ffmpeg=yes option
@@ -86,30 +89,14 @@ if [ "${FFMPEG:-no}" = "no" ]; then
 echo buld using opera ffmpeg.so
 sleep 2
 else
-cat > ffmpegbuild <<EOF
-  # We want to keep this build for later use it is over 3 gigs. 
-if [ -f $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH-custom.zip ]; then
-   echo already built ffmpeg.so zip found 
-elif [ -d $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt ]; then
-  echo clean old build start new !!!SELECT NO to Just Rebuild!!!!
-  sleep 5 
-  cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
-  python build_ffmpeg.py --clean -nw 0.24.4 -ta $FFARCH -pc
- # make sure it builds before we waist our time. Only 14.2 
-else 
-  mkdir -p $TMP/$FFSRNAM
-  cd $TMP/$FFSRNAM
-  git clone https://github.com/Drakeo/nwjs-ffmpeg-prebuilt.git
-  cd $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt
-  python build_ffmpeg.py -nw 0.24.4 -ta $FFARCH -pc
+mkdir -p $build
+cd $build
+wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.30.0/0.30.0-linux-x64.zip
+unzip   0.30.0-linux-x64.zip
+
 fi
-EOF
-cd $CWD
-sh ffmpegbuild 
-rm ffmpegbuild
-fi
-cd $CWD
-wget -c http://ftp.opera.com/pub/opera-developer/$VERSION/linux/$FILENAME
+cd $build
+wget -c http://ftp.opera.com/pub/$PRGNAM/$VERSION/linux/$FILENAME
 
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
 rpm2targz $FILENAME
@@ -120,9 +107,8 @@ rm -rf $TMP/${PRGNAM}-$VERSION
 mkdir -p $TMP/${PRGNAM}-$VERSION
 cd $TMP/${PRGNAM}-$VERSION
 
-tar xvf $CWD/$BASENAME.tar.gz
+tar xvf $build/$BASENAME.tar.gz  
 
-rm $CWD/$BASENAME.tar.gz
 
 chown -R root:root .
 find -L . \
@@ -131,12 +117,12 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-cd $CWD
+cd $build
 cp -rf $TMP/${PRGNAM}-$VERSION/* $PKG
 mkdir -p $PKG/usr/doc/${PRGNAM}-$VERSION
 cd $PKG/usr/doc/${PRGNAM}-$VERSION/
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
-cd $CWD
+cd $build
 cat > slack-desc <<EOF
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.
@@ -379,22 +365,17 @@ if [ -e usr/share/icons/hicolor/icon-theme.cache ]; then
 fi
 EOF
 
-cat $CWD/Licence.txt > $PKG/usr/doc/${PRGNAM}-$VERSION/Licence.txt
+cat $build/Licence.txt > $PKG/usr/doc/${PRGNAM}-$VERSION/Licence.txt
 mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
-
-rm $CWD/Licence.txt 
-rm $CWD/slack-desc 
-rm $CWD/doinst.sh
+cat $build/slack-desc > $PKG/install/slack-desc
+cat $build/doinst.sh > $PKG/install/doinst.sh
 
 cd $CWD
 if [ "${FFMPEG:-no}" = "no" ]; then
 echo built with opera ffmpeg
 else
-cd $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM/
-rm libffmpeg.so
-unzip $TMP/$FFSRNAM/nwjs-ffmpeg-prebuilt/releases/*-linux-$FFARCH-custom.zip
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/opera-developer/lib_extra
+mv $build/libffmpeg.so $PKG/usr/lib${LIBDIRSUFFIX}/opera-developer/lib_extra/
 fi
 
 cd $PKG
@@ -413,10 +394,5 @@ pause 'Press [Enter] key to continue or ctrl c to stop...'
 
 upgradepkg --reinstall --install-new $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
 
-cd $CWD
 
-echo -e "\e[1;33m You should delete rpm $FILENAME it is owned by root. \e[0m"
-pause 'Press [Enter] key to continue or ctrl c to stop and save source RPM...'
-# rest of the script
-#
-rm *.rpm
+
