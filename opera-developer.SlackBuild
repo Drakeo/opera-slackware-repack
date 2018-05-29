@@ -90,6 +90,7 @@ fi
 #ffmpeg=yes option
 if [ "${FFMPEG:-no}" = "no" ]; then
 echo buld using opera ffmpeg.so
+mkdir -p $build
 sleep 2
 else
 mkdir -p $build
