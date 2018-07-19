@@ -73,6 +73,7 @@ fi
 
 rm -rf $PKG
 rm -rf $build
+mkdir -p $build
 mkdir -p $TMP $PKG $OUTPUT
 
 if [ "$ARCH" = "x86_64" ]; then
