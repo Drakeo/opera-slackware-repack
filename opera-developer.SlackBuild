@@ -80,7 +80,7 @@ if [ "$ARCH" = "x86_64" ]; then
 FILENAME=opera-developer_"$VERSION"_amd64.rpm
 BASENAME=opera-developer_"$VERSION"_$BITS
 echo pause 10 seconds to reed this
-echo libffmpeg is still broke on opera-developer use for test only pause 10 seconds to reed this
+echo  libffmpeg works on this build could be  broke on future  opera-developer opera-developer use for test only pause 10 seconds to reed this
 sleep 10
 else
 echo opera no longer supports 32 bit
