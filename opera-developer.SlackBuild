@@ -29,7 +29,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 PRGNAM=opera-developer
-VERSION=${VERSION:-59.0.3154.0}
+VERSION=${VERSION:-59.0.3167.0}
 FFSRNAM=ffmpeg
 BUILD=${BUILD:-2}
 TAG=${TAG:-_SBo}
