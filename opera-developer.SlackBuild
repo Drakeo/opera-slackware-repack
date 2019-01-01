@@ -29,7 +29,6 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 PRGNAM=opera-developer
-VERSION=${VERSION:-59.0.3173.0}
 FFSRNAM=ffmpeg
 BUILD=${BUILD:-2}
 TAG=${TAG:-_SBo}
@@ -71,22 +70,32 @@ else
   LIBDIRSUFFIX=""
 fi
 
-rm -rf $PKG
-rm -rf $build
-mkdir -p $build
-mkdir -p $TMP $PKG $OUTPUT
-
+#check arch
 if [ "$ARCH" = "x86_64" ]; then
-FILENAME=opera-developer_"$VERSION"_amd64.rpm
-BASENAME=opera-developer_"$VERSION"_$BITS
-echo pause 10 seconds to reed this
-echo  libffmpeg works on this build could be  broke on future  opera-developer opera-developer use for test only pause 10 seconds to reed this
-sleep 10
+echo you are x86_64
 else
 echo opera no longer supports 32 bit
 sleep 4
 exit
 fi
+
+
+rm -rf $PKG
+rm -rf $build
+mkdir -p $build
+mkdir -p $TMP $PKG $OUTPUT
+#create latest version
+cd $build
+OPERPULL3=operalatest3.txt
+OPERPULL2=operalatest2.txt
+wget -q -O - http://ftp.opera.com/pub/opera-developer/ >> opera-index.txt
+tail -5 opera-index.txt| sed -n "1p" >> operalt.txt
+cut -b10-21 operalt.txt >> $OPERPULL3
+cut -b10-20 operalt.txt >> $OPERPULL2
+OPLV3=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL3}")
+OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}")
+echo $OPLV3
+echo $OPLV2
 
 #ffmpeg=yes option
 if [ "${FFMPEG:-no}" = "no" ]; then
@@ -98,13 +107,20 @@ mkdir -p $build
 cd $build
 wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.31.4/0.31.4-linux-x64.zip
 unzip   0.31.4-linux-x64.zip
-
 fi
-cd $build
-wget -c http://ftp.opera.com/pub/$PRGNAM/$VERSION/linux/$FILENAME
 
+cd $build
+URL=http://ftp.opera.com/pub/opera-developer/$OPLV3/linux/opera-developer_"$OPLV3"_amd64.rpm
+if wget --spider $URL 2>/dev/null; then
+wget -c  http://ftp.opera.com/pub/opera-developer/$OPLV3/linux/opera-developer_"$OPLV3"_amd64.rpm
+VERSION=$OPLV3
+else
+wget -c  http://ftp.opera.com/pub/opera-developer/$OPLV3/linux/opera-developer_"$OPLV2"_amd64.rpm
+VERSION=$OPLV2
+fi
+FILENAME=$VERSION
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
-rpm2targz $FILENAME
+rpm2targz  opera-developer_"$FILENAME"_amd64.rpm
 
 
 
@@ -112,7 +128,7 @@ rm -rf $TMP/${PRGNAM}-$VERSION
 mkdir -p $TMP/${PRGNAM}-$VERSION
 cd $TMP/${PRGNAM}-$VERSION
 
-tar xvf $build/$BASENAME.tar.gz  
+tar xvf $build/opera-developer_"$FILENAME"_amd64.tar.gz  
 
 
 chown -R root:root .

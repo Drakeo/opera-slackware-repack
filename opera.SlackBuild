@@ -28,8 +28,8 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+
 PRGNAM=opera
-VERSION=${VERSION:-57.0.3098.106}
 FFSRNAM=ffmpeg
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
@@ -71,19 +71,31 @@ else
   LIBDIRSUFFIX=""
 fi
 
-rm -rf $PKG
-rm -rf $build
-mkdir -p $build
-mkdir -p $TMP $PKG $OUTPUT
-
+#check arch
 if [ "$ARCH" = "x86_64" ]; then
-FILENAME=opera-stable_"$VERSION"_amd64.rpm
-BASENAME=opera-stable_"$VERSION"_$BITS
+echo you are x86_64
 else
 echo opera no longer supports 32 bit
 sleep 4
 exit
 fi
+
+rm -rf $PKG
+rm -rf $build
+mkdir -p $build
+mkdir -p $TMP $PKG $OUTPUT
+
+#create latest version
+cd $build
+OPERPULL3=operalatest3.txt
+OPERPULL2=operalatest2.txt
+wget -q -O - https://ftp.opera.com/pub/opera/desktop/ >> opera-index.txt
+tail -3 opera-index.txt| sed -n "1p" >> operalt.txt
+cut -b10-22 operalt.txt >> $OPERPULL3
+cut -b10-21 operalt.txt >> $OPERPULL2
+OPLV3=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL3}")
+OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}")
+
 
 #ffmpeg=yes option
 if [ "${FFMPEG:-no}" = "no" ]; then
@@ -96,11 +108,19 @@ wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.31.4
 unzip   0.31.4-linux-x64.zip
 
 fi
-cd $build
-wget -c https://ftp.opera.com/pub/opera/desktop/"$VERSION"/linux/$FILENAME
 
+cd $build
+URL=https://ftp.opera.com/pub/opera/desktop/$OPLV3/linux/opera-stable_"$OPLV3"_amd64.rpm
+if wget --spider $URL 2>/dev/null; then
+wget -c  https://ftp.opera.com/pub/opera/desktop/$OPLV3/linux/opera-stable_"$OPLV3"_amd64.rpm
+VERSION=$OPLV3
+else
+wget -c  https://ftp.opera.com/pub/opera/desktop/$OPLV3/linux/opera-stable_"$OPLV2"_amd64.rpm
+VERSION=$OPLV2
+fi
+FILENAME=$VERSION
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
-rpm2targz $FILENAME
+rpm2targz  opera-stable_"$FILENAME"_amd64.rpm
 
 
 
@@ -108,7 +128,7 @@ rm -rf $TMP/${PRGNAM}-$VERSION
 mkdir -p $TMP/${PRGNAM}-$VERSION
 cd $TMP/${PRGNAM}-$VERSION
 
-tar xvf $build/$BASENAME.tar.gz  
+tar xvf $build/opera-stable_"$FILENAME"_amd64.tar.gz  
 
 
 chown -R root:root .
