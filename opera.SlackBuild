@@ -89,12 +89,11 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $build
 OPERPULL3=operalatest3.txt
 OPERPULL2=operalatest2.txt
-wget -q -O - https://ftp.opera.com/pub/opera/desktop/ >> opera-index.txt
-tail -3 opera-index.txt| sed -n "1p" >> operalt.txt
-cut -b10-22 operalt.txt >> $OPERPULL3
-cut -b10-21 operalt.txt >> $OPERPULL2
+wget -q -O - https://rpm.opera.com/rpm/  |  grep x64  | tail -1 >> operalt.txt
+cut -b95-107 operalt.txt >> $OPERPULL3
+cut -b95-106 operalt.txt >> $OPERPULL2
 OPLV3=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL3}")
-OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}")
+OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}") 
 
 
 #ffmpeg=yes option

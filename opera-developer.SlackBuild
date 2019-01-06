@@ -88,12 +88,11 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $build
 OPERPULL3=operalatest3.txt
 OPERPULL2=operalatest2.txt
-wget -q -O - http://ftp.opera.com/pub/opera-developer/ >> opera-index.txt
-tail -5 opera-index.txt| sed -n "1p" >> operalt.txt
-cut -b10-21 operalt.txt >> $OPERPULL3
-cut -b10-20 operalt.txt >> $OPERPULL2
+wget -q -O - https://rpm.opera.com/rpm/  |  grep developer | tail -1 >> operalt.txt
+cut -b98-108 operalt.txt >> $OPERPULL3
+cut -b98-108 operalt.txt >> $OPERPULL2
 OPLV3=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL3}")
-OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}")
+OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}") 
 echo $OPLV3
 echo $OPLV2
 
