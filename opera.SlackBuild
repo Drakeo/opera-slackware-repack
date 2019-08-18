@@ -103,8 +103,8 @@ sleep 2
 else
 mkdir -p $build
 cd $build
-wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.31.4/0.31.4-linux-x64.zip
-unzip   0.31.4-linux-x64.zip
+wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.39.2/0.39.2-linux-x64.zip
+unzip   0.39.2-linux-x64.zip
 
 fi
 
