@@ -28,9 +28,10 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-PRGNAM=opera-developer
+PRGNAM=opera
+DEVT=developer
 FFSRNAM=ffmpeg
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
 
@@ -45,7 +46,7 @@ fi
 CWD=$(pwd)
 TMP=${TMP:-/tmp/SBo}
 build=$TMP/build
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PRGNAM-$DEVT
 OUTPUT=${OUTPUT:-/tmp}
 
 set -e
@@ -86,22 +87,19 @@ mkdir -p $build
 mkdir -p $TMP $PKG $OUTPUT
 #create latest version
 cd $build
-OPERPULL3=operalatest3.txt
-OPERPULL2=operalatest2.txt
-wget -q -O - https://rpm.opera.com/rpm/  |  grep developer | tail -1 >> operalt.txt
-cut -b98-108 operalt.txt >> $OPERPULL3
-cut -b98-108 operalt.txt >> $OPERPULL2
-OPLV3=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL3}")
-OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}") 
-echo $OPLV3
-echo $OPLV2
+OPLV3=$(wget -q -O - https://rpm.opera.com/rpm/  |  grep ${DEVT} | tail -1 | cut -b98-108)
+OPLV2=$(wget -q -O - https://rpm.opera.com/rpm/  |  grep ${DEVT} | tail -1 | cut -b98-108) 
 
 #ffmpeg=yes option
-if [ "${FFMPEG:-no}" = "no" ]; then
-echo buld using opera ffmpeg.so
-mkdir -p $build
+echo -e "\e[44mif you want to use proprietary codecs ffmpeg\e[0m"
+echo -e "\e[44mtype yes or no\e[0m"
+read -p 'Option?: ' FFMPEGEX
+if [ "$FFMPEGEX" = "no" ]; then
+echo -e "\e[43mbuld using opera ffmpeg.so\e[0m"
 sleep 2
 else
+echo -e "\e[43mbuld using proprietary codecs ffmpeg.so\e[0m"
+sleep 2
 mkdir -p $build
 cd $build
 wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.39.2/0.39.2-linux-x64.zip
@@ -109,25 +107,31 @@ unzip   0.39.2-linux-x64.zip
 fi
 
 cd $build
-URL=http://ftp.opera.com/pub/opera-developer/$OPLV3/linux/opera-developer_"$OPLV3"_amd64.rpm
+URL=http://ftp.opera.com/pub/${PRGNAM}-${DEVT}/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 if wget --spider $URL 2>/dev/null; then
-wget -c  http://ftp.opera.com/pub/opera-developer/$OPLV3/linux/opera-developer_"$OPLV3"_amd64.rpm
+wget -c  http://ftp.opera.com/pub/${PRGNAM}-${DEVT}/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 VERSION=$OPLV3
 else
-wget -c  http://ftp.opera.com/pub/opera-developer/$OPLV2/linux/opera-developer_"$OPLV2"_amd64.rpm
+wget -c  http://ftp.opera.com/pub/${PRGNAM}-${DEVT}/$OPLV2/linux/${PRGNAM}-${DEVT}_"$OPLV2"_amd64.rpm
 VERSION=$OPLV2
 fi
-FILENAME=$VERSION
+
+#Find installed version
+INSV=$(ls /var/log/packages | grep $PRGNAM-$DEVT |head -1)
+OPINS="$PRGNAM-$DEVT-$VERSION-$ARCH-$BUILD$TAG"
+if [ "$INSV" = "$OPINS" ]; then
+echo -e "\e[44mopera is up to date no need to upgrade\e[0m"
+rm -rf $build
+exit
+fi
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
-rpm2targz  opera-developer_"$FILENAME"_amd64.rpm
+rpm2targz  ${PRGNAM}-${DEVT}_"$VERSION"_amd64.rpm
 
+rm -rf $TMP/${PRGNAM}-${DEVT}-$VERSION
+mkdir -p $TMP/${PRGNAM}-${DEVT}-$VERSION
+cd $TMP/${PRGNAM}-${DEVT}-$VERSION
 
-
-rm -rf $TMP/${PRGNAM}-$VERSION
-mkdir -p $TMP/${PRGNAM}-$VERSION
-cd $TMP/${PRGNAM}-$VERSION
-
-tar xvf $build/opera-developer_"$FILENAME"_amd64.tar.gz  
+tar xvf $build/${PRGNAM}-${DEVT}_"$VERSION"_amd64.tar.gz  
 
 
 chown -R root:root .
@@ -138,10 +142,10 @@ find -L . \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 cd $build
-cp -rf $TMP/${PRGNAM}-$VERSION/* $PKG
-mkdir -p $PKG/usr/doc/${PRGNAM}-$VERSION
-cd $PKG/usr/doc/${PRGNAM}-$VERSION/
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+cp -rf $TMP/${PRGNAM}-${DEVT}-$VERSION/* $PKG
+mkdir -p $PKG/usr/doc/${PRGNAM}-${DEVT}-$VERSION
+cd $PKG/usr/doc/${PRGNAM}-${DEVT}-$VERSION/
+cat $CWD/$PRGNAM-$DEVT.SlackBuild > $PKG/usr/doc/$PRGNAM-$DEVT-$VERSION/$PRGNAM.SlackBuild
 cd $build
 cat > slack-desc <<EOF
 # HOW TO EDIT THIS FILE:
@@ -369,8 +373,8 @@ Apache License
    limitations under the License.
 EOF
 cat > doinst.sh <<EOF
-chown root:root /usr/lib${LIBDIRSUFFIX}/$PRGNAM/opera_sandbox
-chmod 4755 /usr/lib${LIBDIRSUFFIX}/$PRGNAM/opera_sandbox
+chown root:root /usr/lib${LIBDIRSUFFIX}/$PRGNAM-$DEVT/opera_sandbox
+chmod 4755 /usr/lib${LIBDIRSUFFIX}/$PRGNAM-$DEVT/opera_sandbox
 if [ -x /usr/bin/update-desktop-database ]; then
   /usr/bin/update-desktop-database -q usr/share/applications >/dev/null 2>&1
 fi
@@ -386,34 +390,34 @@ if [ -e usr/share/icons/hicolor/icon-theme.cache ]; then
 fi
 EOF
 
-cat $build/Licence.txt > $PKG/usr/doc/${PRGNAM}-$VERSION/Licence.txt
+cat $build/Licence.txt > $PKG/usr/doc/${PRGNAM}-${DEVT}-$VERSION/Licence.txt
 mkdir -p $PKG/install
 cat $build/slack-desc > $PKG/install/slack-desc
 cat $build/doinst.sh > $PKG/install/doinst.sh
 
 cd $CWD
-if [ "${FFMPEG:-no}" = "no" ]; then
+if [ "$FFMPEGEX" = "no" ]; then
 echo built with opera ffmpeg
 else
-mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/opera-developer/lib_extra
-mv $build/libffmpeg.so $PKG/usr/lib${LIBDIRSUFFIX}/opera-developer/lib_extra/
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM-$DEVT/lib_extra
+mv $build/libffmpeg.so $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM-$DEVT/lib_extra/
 fi
 
 cd $PKG
 
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$DEVT-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
 
 # ...
 function pause(){
    read -p "$*"
 }
 
-echo -e "\e[1;33m Would you like to install $PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}.\e[0m"
+echo -e "\e[1;33m Would you like to install $PRGNAM-$DEVT-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}.\e[0m"
 pause 'Press [Enter] key to continue or ctrl c to stop...'
 # rest of the script
 #
 
-upgradepkg --reinstall --install-new $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
+upgradepkg --reinstall --install-new $OUTPUT/$PRGNAM-$DEVT-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
 
 
 

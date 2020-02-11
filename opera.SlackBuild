@@ -30,6 +30,7 @@ fi
 
 
 PRGNAM=opera
+DEVT=stable
 FFSRNAM=ffmpeg
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
@@ -87,47 +88,52 @@ mkdir -p $TMP $PKG $OUTPUT
 
 #create latest version
 cd $build
-OPERPULL3=operalatest3.txt
-OPERPULL2=operalatest2.txt
-wget -q -O - https://rpm.opera.com/rpm/  |  grep x64  | tail -1 >> operalt.txt
-cut -b95-107 operalt.txt >> $OPERPULL3
-cut -b95-106 operalt.txt >> $OPERPULL2
-OPLV3=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL3}")
-OPLV2=$(sed "s/\(.\{10\}\).\{6\}//" "${OPERPULL2}") 
 
+OPLV3=$(wget -q -O - https://rpm.opera.com/rpm/  |  grep ${DEVT} | tail -1 | cut -b95-107)
+OPLV2=$(wget -q -O - https://rpm.opera.com/rpm/  |  grep ${DEVT}  | tail -1 | cut -b95-106) 
 
 #ffmpeg=yes option
-if [ "${FFMPEG:-no}" = "no" ]; then
-echo buld using opera ffmpeg.so
+echo -e "\e[44mif you want to use proprietary codecs ffmpeg\e[0m"
+echo -e "\e[44mtype yes or no\e[0m"
+read -p 'Option?: ' FFMPEGEX
+if [ "$FFMPEGEX" = "no" ]; then
+echo -e "\e[43mbuld using opera ffmpeg.so\e[0m"
 sleep 2
 else
+echo -e "\e[43mbuld using proprietary codecs ffmpeg.so\e[0m"
+sleep 2
 mkdir -p $build
 cd $build
 wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.39.2/0.39.2-linux-x64.zip
 unzip   0.39.2-linux-x64.zip
-
 fi
 
 cd $build
-URL=https://ftp.opera.com/pub/opera/desktop/$OPLV3/linux/opera-stable_"$OPLV3"_amd64.rpm
+URL=http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 if wget --spider $URL 2>/dev/null; then
-wget -c  https://ftp.opera.com/pub/opera/desktop/$OPLV3/linux/opera-stable_"$OPLV3"_amd64.rpm
+wget -c  http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 VERSION=$OPLV3
 else
-wget -c  https://ftp.opera.com/pub/opera/desktop/$OPLV2/linux/opera-stable_"$OPLV2"_amd64.rpm
+wget -c  http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV2/linux/${PRGNAM}-${DEVT}_"$OPLV2"_amd64.rpm
 VERSION=$OPLV2
 fi
-FILENAME=$VERSION
+
+#Find installed version
+INSV=$(ls /var/log/packages | grep $PRGNAM |head -1)
+OPINS="$PRGNAM-$VERSION-$ARCH-$BUILD$TAG"
+if [ "$INSV" = "$OPINS" ]; then
+echo -e "\e[44mopera is up to date no need to upgrade\e[0m"
+rm -rf $build
+exit
+fi
 echo -e "\e[1;33m wait a minute running rpm2targz \e[0m"
-rpm2targz  opera-stable_"$FILENAME"_amd64.rpm
-
-
+rpm2targz  ${PRGNAM}-${DEVT}_"$VERSION"_amd64.rpm
 
 rm -rf $TMP/${PRGNAM}-$VERSION
 mkdir -p $TMP/${PRGNAM}-$VERSION
 cd $TMP/${PRGNAM}-$VERSION
 
-tar xvf $build/opera-stable_"$FILENAME"_amd64.tar.gz  
+tar xvf $build/${PRGNAM}-${DEVT}_"$VERSION"_amd64.tar.gz 
 
 
 chown -R root:root .
@@ -392,7 +398,7 @@ cat $build/slack-desc > $PKG/install/slack-desc
 cat $build/doinst.sh > $PKG/install/doinst.sh
 
 cd $CWD
-if [ "${FFMPEG:-no}" = "no" ]; then
+if [ "$FFMPEGEX" = "no" ]; then
 echo built with opera ffmpeg
 else
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/opera/lib_extra

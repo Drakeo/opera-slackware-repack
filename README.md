@@ -6,9 +6,9 @@ opera-sandbox.
 
 # ffmpeg restricted build opition
 ~~~
-FFMPEG=YES ./opera.SlackBuild
+./opera.SlackBuild
 or
-FFMPEG=YES ./opera-developer.SlackBuild
+./opera-developer.SlackBuild
 
 opera-FFMPEG and  opera-developer-FFMPG 
 This allows h264 video formats
