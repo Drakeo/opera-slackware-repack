@@ -89,8 +89,8 @@ mkdir -p $TMP $PKG $OUTPUT
 #create latest version
 cd $build
 
-OPLV3=$(wget -q -O - https://rpm.opera.com/rpm/  |  grep ${DEVT} | tail -1 | cut -b95-107)
-OPLV2=$(wget -q -O - https://rpm.opera.com/rpm/  |  grep ${DEVT}  | tail -1 | cut -b95-106) 
+OPLV3=$(curl -s  https://rpm.opera.com/rpm/ | grep $DEVT | tail -1 | cut -b95-107)
+OPLV2=$(curl -s  https://rpm.opera.com/rpm/ | grep $DEVT | tail -1 | cut -b95-106) 
 
 #ffmpeg=yes option
 echo -e "\e[44mif you want to use proprietary codecs ffmpeg\e[0m"
@@ -104,17 +104,17 @@ echo -e "\e[43mbuld using proprietary codecs ffmpeg.so\e[0m"
 sleep 2
 mkdir -p $build
 cd $build
-wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.39.2/0.39.2-linux-x64.zip
+wget -c  https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.39.2/0.39.2-linux-x64.zip
 unzip   0.39.2-linux-x64.zip
 fi
 
 cd $build
 URL=http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
-if wget --spider $URL 2>/dev/null; then
-wget -c  http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
+if curl --output /dev/null --silent --fail -r 0-0 "$URL"; then
+curl -C - -O http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 VERSION=$OPLV3
 else
-wget -c  http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV2/linux/${PRGNAM}-${DEVT}_"$OPLV2"_amd64.rpm
+curl -C - -O http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV2/linux/${PRGNAM}-${DEVT}_"$OPLV2"_amd64.rpm
 VERSION=$OPLV2
 fi
 
