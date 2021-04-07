@@ -128,12 +128,12 @@ unzip  $VAR-linux-x64.zip
 fi
 
 cd $build
-URL=http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
+URL=https://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 if curl --output /dev/null --silent --fail -r 0-0 "$URL"; then
-curl -C - -O http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
+curl -C - -O https://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV3/linux/${PRGNAM}-${DEVT}_"$OPLV3"_amd64.rpm
 VERSION=$OPLV3
 else
-curl -C - -O http://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV2/linux/${PRGNAM}-${DEVT}_"$OPLV2"_amd64.rpm
+curl -C - -O https://ftp.opera.com/pub/${PRGNAM}/desktop/$OPLV2/linux/${PRGNAM}-${DEVT}_"$OPLV2"_amd64.rpm
 VERSION=$OPLV2
 fi
 
