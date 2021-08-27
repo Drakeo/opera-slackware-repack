@@ -81,12 +81,43 @@ exit
 fi
 
 
+#find slackware version with gcc
+SLKGCC="$(cat /etc/slackware-version)"
+
+if [ "$SLKGCC" = "14.0" ]; then
+  SLKUSYS="14.0"
+  VAR="0.29.0"
+elif [ "$SLKGCC" = "14.1" ]; then
+  SLKUSED="14.1"
+  VAR="0.29.0"
+  echo YOU MUST USE NINJA
+elif [ "$SLKGCC" = "14.2" ]; then
+  SLKUSYS="14.2"
+  VAR="0.39.2"
+elif [ "$SLKGCC" = "15.0" ]; then
+  SLKUSYS="15.0"
+  VAR="0.52.2"
+else
+  SLKUSYS="current"
+  VAR="0.52.2"
+fi
+#check arch
+if [ "$ARCH" = "x86_64" ]; then
+echo you are x86_64
+else
+echo opera no longer supports 32 bit
+sleep 4
+exit
+fi
+
 rm -rf $PKG
 rm -rf $build
 mkdir -p $build
 mkdir -p $TMP $PKG $OUTPUT
+
 #create latest version
 cd $build
+
 OPLV3=$(curl -s https://rpm.opera.com/rpm/  |  grep ${DEVT} | tail -1 | cut -b98-108)
 OPLV2=$(curl -s https://rpm.opera.com/rpm/  |  grep ${DEVT} | tail -1 | cut -b98-108) 
 
@@ -102,8 +133,8 @@ echo -e "\e[43mbuld using proprietary codecs ffmpeg.so\e[0m"
 sleep 2
 mkdir -p $build
 cd $build
-wget -c https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/0.39.2/0.39.2-linux-x64.zip
-unzip   0.39.2-linux-x64.zip
+wget -c  https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/$VAR/$VAR-linux-x64.zip
+unzip  $VAR-linux-x64.zip
 fi
 
 cd $build

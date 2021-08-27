@@ -84,12 +84,12 @@ elif [ "$SLKGCC" = "14.1" ]; then
 elif [ "$SLKGCC" = "14.2" ]; then
   SLKUSYS="14.2"
   VAR="0.39.2"
-elif [ "$SLKGCC" = "14.2+" ]; then
-  SLKUSYS="14.2+"
-  VAR="0.44.6"
+elif [ "$SLKGCC" = "15.0" ]; then
+  SLKUSYS="15.0"
+  VAR="0.55.0"
 else
   SLKUSYS="current"
-  VAR="0.44.6"
+  VAR="0.55.0"
 fi
 #check arch
 if [ "$ARCH" = "x86_64" ]; then
